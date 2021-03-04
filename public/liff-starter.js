@@ -94,3 +94,65 @@ function displayIsInClientInfo() {
         document.getElementById('isInClientMessage').textContent = 'You are opening the app in an external browser.';
     }
 }
+
+function registerButtonHandlers() {
+    document.getElementById('openWindowButton').addEventListener('click', function() {
+        liff.openWindow({
+            url: 'https://note-liff-app.herokuapp.com/', // Isi dengan Endpoint URL aplikasi web Anda
+            external: true
+        });
+    });
+
+    document.getElementById('closeWindowButton').addEventListener('click', function() {
+        if (!liff.isInClient()) {
+            sendAlertIfNotInClient();
+        } else {
+            liff.closeWindow();
+        }
+    });
+
+    document.getElementById('liffLoginButton').addEventListener('click', function() {
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        }
+    });
+ 
+    document.getElementById('liffLogoutButton').addEventListener('click', function() {
+        if (liff.isLoggedIn()) {
+            liff.logout();
+            window.location.reload();
+        }
+    });
+
+    document.getElementById('sendMessageButton').addEventListener('click', function() {
+        if (!liff.isInClient()) {
+            sendAlertIfNotInClient();
+        } else {
+            liff.sendMessages([{
+                'type': 'text',
+                'text': "Anda telah menggunakan fitur Send Message!"
+            }]).then(function() {
+                window.alert('Ini adalah pesan dari fitur Send Message');
+            }).catch(function(error) {
+                window.alert('Error sending message: ' + error);
+            });
+        }
+    });
+}
+
+function sendAlertIfNotInClient() {
+    alert('This button is unavailable as LIFF is currently being opened in an external browser.');
+}
+ 
+/**
+* Toggle specified element
+* @param {string} elementId The ID of the selected element
+*/
+function toggleElement(elementId) {
+    const elem = document.getElementById(elementId);
+    if (elem.offsetWidth > 0 && elem.offsetHeight > 0) {
+        elem.style.display = 'none';
+    } else {
+        elem.style.display = 'block';
+    }
+}
